@@ -1,0 +1,48 @@
+buildscript {
+    ext {
+        springDependencyVersion = '1.1.0'
+        springCloudVersion = '2023.0.0'
+        jibPluginVersion = '3.4.0'
+    }
+}
+
+plugins {
+    id 'java'
+    id "io.spring.dependency-management" version "${springDependencyVersion}"
+    id 'com.google.cloud.tools.jib' version "${jibPluginVersion}"
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server"
+}
+
+jib {
+    allowInsecureRegistries = 'true'
+    from {
+        image = 'openjdk:17-slim'
+    }
+    to {
+        image = 'playqd-service-discovery'
+        tags = ['1.0.0']
+    }
+    container {
+        mainClass = 'com.playqd.servicediscovery.Application'
+        ports = ['9915']
+        creationTime = "USE_CURRENT_TIMESTAMP"
+        environment = [SPRING_CONFIG_LOCATION: "/app/playqd/config/application.yaml"]
+    }
+}
