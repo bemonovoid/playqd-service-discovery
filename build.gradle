@@ -33,7 +33,7 @@ dependencies {
 jib {
     allowInsecureRegistries = 'true'
     from {
-        image = 'openjdk:17-slim'
+        image = 'openjdk:21-slim'
     }
     to {
         image = 'playqd-service-discovery'
